@@ -1,7 +1,9 @@
 package com.javabaas.shell.commands;
 
 import com.javabaas.javasdk.JBApp;
+import com.javabaas.javasdk.JBException;
 import com.javabaas.shell.common.CommandContext;
+import org.fusesource.jansi.Ansi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliAvailabilityIndicator;
@@ -41,8 +43,13 @@ public class ApiStatCommands implements CommandMarker {
         String toString = simpleDateFormat.format(to);
         //显示列表
         JBApp.JBApiStat apiStat = new JBApp.JBApiStat(null, null, null, fromString, toString);
-        List<Long> list = JBApp.getApiStat(apiStat);
-        System.out.println(list);
+        try {
+            List<Long> list = JBApp.getApiStat(apiStat);
+            System.out.println(list);
+        } catch (JBException e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
+        }
+
         return null;
     }
 

@@ -1,10 +1,7 @@
 package com.javabaas.shell.commands;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.javabaas.javasdk.JBField;
-import com.javabaas.javasdk.JBObject;
-import com.javabaas.javasdk.JBQuery;
-import com.javabaas.javasdk.JBUtils;
+import com.javabaas.javasdk.*;
 import com.javabaas.shell.common.CommandContext;
 import com.javabaas.shell.util.DateUtil;
 import com.javabaas.shell.util.FieldUtil;
@@ -53,6 +50,8 @@ public class ObjectCommands implements CommandMarker {
             JBUtils.copyPropertiesFromMapToJBObject(object, map);
             object.save();
             System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Object added.").reset());
+        } catch (JBException e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
         }
@@ -74,6 +73,8 @@ public class ObjectCommands implements CommandMarker {
             JBUtils.copyPropertiesFromMapToJBObject(object, JBUtils.readValue(inputs[1], Map.class));
             object.save();
             System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Object updated.").reset());
+        } catch (JBException e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
         }
@@ -83,10 +84,14 @@ public class ObjectCommands implements CommandMarker {
     public void get(@CliOption(key = {""}, mandatory = true, help = "Object id.") final String id)
             throws JsonProcessingException {
         context.cancelDoubleCheck();
-        String className = context.getCurrentClass();
-        JBQuery query = new JBQuery(className);
-        JBObject object = query.get(id);
-        System.out.println(object);
+        try {
+            String className = context.getCurrentClass();
+            JBQuery query = new JBQuery(className);
+            JBObject object = query.get(id);
+            System.out.println(object);
+        } catch (JBException e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
+        }
     }
 
     @CliCommand(value = "list", help = "Show objects in class.")
@@ -105,6 +110,8 @@ public class ObjectCommands implements CommandMarker {
             }
             List<JBObject> list = query.find();
             list.forEach(object -> System.out.println(object));
+        } catch (JBException e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
         }
@@ -147,24 +154,8 @@ public class ObjectCommands implements CommandMarker {
                 headers.add("createdAt");
                 types.add("<DATE>");
                 width.add(21);
-//                headers.add("updatedAt");
-//                types.add("<DATE>");
-//                width.add(21);
             }
-//            if (plat.equals("1")) {
-//                //显示平台
-//                headers.add("createdPlat");
-//                types.add("<STRING>");
-//                width.add(13);
-//                headers.add("updatedPlat");
-//                types.add("<STRING>");
-//                width.add(13);
-//            }
-//            if (acl.equals("1")) {
-//                headers.add("ACL");
-//                types.add("<ACL>");
-//                width.add(20);
-//            }
+
             //自定义字段
             fields.forEach(field -> {
                 headers.add(field.getName());
@@ -208,16 +199,12 @@ public class ObjectCommands implements CommandMarker {
                 System.out.println(rend.render(at, true));
             }
 
+        } catch (JBException e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
         }
     }
-
-    @CliCommand(value = "sort", help = "Add object.")
-    public void sort() {
-
-    }
-
 
     @CliCommand(value = "del", help = "Delete object.")
     public void delete(@CliOption(key = {""}, mandatory = true, help = "Object id.") final String id) {
@@ -227,6 +214,8 @@ public class ObjectCommands implements CommandMarker {
             JBObject object = JBObject.createWithOutData(className, id);
             object.delete();
             System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Object deleted.").reset());
+        } catch (JBException e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
         }
@@ -259,6 +248,8 @@ public class ObjectCommands implements CommandMarker {
             query.setWhereSting(where);
             int count = query.count();
             System.out.println(count);
+        } catch (JBException e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
         }

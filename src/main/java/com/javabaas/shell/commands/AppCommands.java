@@ -32,7 +32,7 @@ public class AppCommands implements CommandMarker {
     @Autowired
     private SignUtil signUtil;
 
-    @CliAvailabilityIndicator({"export", "info"})
+    @CliAvailabilityIndicator({"export", "info", "account"})
     public boolean isAvailable() {
         return context.getCurrentApp() != null;
     }
@@ -188,14 +188,18 @@ public class AppCommands implements CommandMarker {
         try {
             List<String> accountTypes = getAccountTypes();
             int accountType = ASKUtil.askNumber(accountTypes, "请选择Account Type， 默认为push", 1);
+            if (accountType == 0) {
+                System.out.println("Faild Set Account!");
+                return;
+            }
             String key = ASKUtil.askString("请输入key值");
             if (JBUtils.isEmpty(key)) {
-                System.out.println("Set Account End!");
+                System.out.println("Faild Set Account!");
                 return;
             }
             String secret = ASKUtil.askString("请输入secret值");
             if (JBUtils.isEmpty(secret)) {
-                System.out.println("Set Account End!");
+                System.out.println("Faild Set Account!");
                 return;
             }
 

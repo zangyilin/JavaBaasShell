@@ -1,6 +1,7 @@
 package com.javabaas.shell.commands;
 
 import com.javabaas.javasdk.JBClazz;
+import com.javabaas.javasdk.JBException;
 import com.javabaas.javasdk.JBUtils;
 import com.javabaas.shell.common.CommandContext;
 import org.fusesource.jansi.Ansi;
@@ -33,9 +34,13 @@ public class ClassCommands implements CommandMarker {
     @CliCommand(value = "classes", help = "Show class list.")
     public void find() {
         context.cancelDoubleCheck();
-        //显示列表
-        List<JBClazz> list = JBClazz.list();
-        list.forEach(clazz -> System.out.println(clazz.getName() + "(" + clazz.getCount() + ")"));
+        try {
+            //显示列表
+            List<JBClazz> list = JBClazz.list();
+            list.forEach(clazz -> System.out.println(clazz.getName() + "(" + clazz.getCount() + ")"));
+        } catch (JBException e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
+        }
     }
 
     @CliCommand(value = "set", help = "Set current class.")
@@ -49,6 +54,8 @@ public class ClassCommands implements CommandMarker {
                 JBClazz.get(name);
                 System.out.println(Ansi.ansi().a("Set current class to ").fg(Ansi.Color.GREEN).a(name).reset());
                 context.setCurrentClass(name);
+            } catch (JBException e) {
+                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
             } catch (HttpClientErrorException e) {
                 System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
             }
@@ -64,10 +71,14 @@ public class ClassCommands implements CommandMarker {
             context.setDoubleCheck(new DoubleCheckListener() {
                 @Override
                 public void confirm() {
-                    JBClazz clazz = new JBClazz(name);
-                    clazz.delete();
-                    context.setCurrentClass(null);
-                    System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Class deleted.").reset());
+                    try {
+                        JBClazz clazz = new JBClazz(name);
+                        clazz.delete();
+                        context.setCurrentClass(null);
+                        System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Class deleted.").reset());
+                    } catch (JBException e) {
+                        System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
+                    }
                 }
 
                 @Override
@@ -87,6 +98,8 @@ public class ClassCommands implements CommandMarker {
             JBClazz clazz = new JBClazz(name);
             clazz.save();
             System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Class added.").reset());
+        } catch (JBException e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
         }
@@ -98,6 +111,8 @@ public class ClassCommands implements CommandMarker {
         try {
             JBClazz.JBClazzExport clazzExport = JBClazz.export(name);
             System.out.println(JBUtils.writeValueAsString(clazzExport));
+        } catch (JBException e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
         }
@@ -109,6 +124,8 @@ public class ClassCommands implements CommandMarker {
         try {
             JBClazz.importData(clazz);
             System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Clazz imported.").reset());
+        } catch (JBException e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
         }

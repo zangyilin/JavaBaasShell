@@ -2,6 +2,7 @@ package com.javabaas.shell.commands;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.javabaas.javasdk.JBClazz;
+import com.javabaas.javasdk.JBException;
 import com.javabaas.javasdk.JBUtils;
 import com.javabaas.shell.common.CommandContext;
 import org.fusesource.jansi.Ansi;
@@ -37,6 +38,8 @@ public class ClassAclCommands implements CommandMarker {
         try {
             JBClazz clazz = JBClazz.get(className);
             System.out.println(clazz.getAcl());
+        } catch (JBException e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
         }
@@ -53,6 +56,8 @@ public class ClassAclCommands implements CommandMarker {
             clazz.setAcl(clazzAcl);
             clazz.updateClazzAcl();
             System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("ACL updated.").reset());
+        } catch (JBException e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
         }
