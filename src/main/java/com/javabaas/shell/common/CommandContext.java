@@ -2,7 +2,6 @@ package com.javabaas.shell.common;
 
 import com.javabaas.javasdk.JBApp;
 import com.javabaas.javasdk.JBConfig;
-import com.javabaas.shell.commands.DoubleCheckListener;
 import com.javabaas.shell.provider.PromptProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,12 +18,6 @@ public class CommandContext {
     private PromptProvider promptProvider;
     private String currentClass;
     private JBApp currentApp;
-    private boolean doubleCheck;
-    private DoubleCheckListener checkListener;
-
-    public boolean isDoubleCheck() {
-        return doubleCheck;
-    }
 
     public String getCurrentClass() {
         return currentClass;
@@ -44,28 +37,6 @@ public class CommandContext {
     public void setCurrentClass(String currentClass) {
         this.currentClass = currentClass;
         changePrompt();
-    }
-
-    public void confirmDoubleCheck() {
-        checkListener.confirm();
-        removeDoubleCheck();
-    }
-
-    public void cancelDoubleCheck() {
-        if (checkListener != null) {
-            checkListener.cancel();
-        }
-        removeDoubleCheck();
-    }
-
-    public void setDoubleCheck(DoubleCheckListener listener) {
-        this.checkListener = listener;
-        doubleCheck = true;
-    }
-
-    public void removeDoubleCheck() {
-        this.checkListener = null;
-        doubleCheck = false;
     }
 
     private void changePrompt() {

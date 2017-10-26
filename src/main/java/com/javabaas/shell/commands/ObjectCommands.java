@@ -5,7 +5,6 @@ import com.javabaas.javasdk.*;
 import com.javabaas.shell.common.CommandContext;
 import com.javabaas.shell.util.DateUtil;
 import com.javabaas.shell.util.FieldUtil;
-import com.javabaas.shell.util.PropertiesUtil;
 import com.javabaas.shell.util.table.AsciiTableRenderer;
 import de.vandermeer.asciitable.v2.V2_AsciiTable;
 import de.vandermeer.asciitable.v2.render.WidthFixedColumns;
@@ -22,6 +21,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static com.javabaas.shell.util.PropertiesUtil.getHost;
 
 /**
  * Created by Staryet on 15/8/21.
@@ -42,7 +43,6 @@ public class ObjectCommands implements CommandMarker {
     @CliCommand(value = "add", help = "Add object.")
     public void add(@CliOption(key = {""}, mandatory = true, help = "Object by json.") final String string)
             throws JsonProcessingException {
-        context.cancelDoubleCheck();
         String className = context.getCurrentClass();
         try {
             Map<String, Object> map = JBUtils.readValue(string, Map.class);
@@ -60,7 +60,6 @@ public class ObjectCommands implements CommandMarker {
     @CliCommand(value = "update", help = "Update object.")
     public void update(@CliOption(key = {""}, mandatory = true, help = "Input") final String input)
             throws JsonProcessingException {
-        context.cancelDoubleCheck();
         String[] inputs = input.split(" ");
         if (inputs.length < 2) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("No object!").reset());
@@ -83,7 +82,6 @@ public class ObjectCommands implements CommandMarker {
     @CliCommand(value = "get", help = "Show object in class.")
     public void get(@CliOption(key = {""}, mandatory = true, help = "Object id.") final String id)
             throws JsonProcessingException {
-        context.cancelDoubleCheck();
         try {
             String className = context.getCurrentClass();
             JBQuery query = new JBQuery(className);
@@ -96,9 +94,9 @@ public class ObjectCommands implements CommandMarker {
 
     @CliCommand(value = "list", help = "Show objects in class.")
     public void list(@CliOption(key = {""}, mandatory = false, help = "Query condition.") final String where,
-                     @CliOption(key = {"skip"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "0") final String skip)
+                     @CliOption(key = {"skip"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "0") final
+                     String skip)
             throws JsonProcessingException {
-        context.cancelDoubleCheck();
         try {
             String className = context.getCurrentClass();
             JBQuery query = new JBQuery(className);
@@ -119,13 +117,17 @@ public class ObjectCommands implements CommandMarker {
 
     @CliCommand(value = "table", help = "Show objects table")
     public void table(@CliOption(key = {""}, mandatory = false, help = "Query condition.") final String where,
-                      @CliOption(key = {"skip"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "0") final String skip,
-                      @CliOption(key = {"t"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String time,
-                      @CliOption(key = {"p"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String plat,
-                      @CliOption(key = {"a"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String acl,
-                      @CliOption(key = {"s"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String single)
+                      @CliOption(key = {"skip"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "0") final
+                      String skip,
+                      @CliOption(key = {"t"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String
+                              time,
+                      @CliOption(key = {"p"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String
+                              plat,
+                      @CliOption(key = {"a"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String
+                              acl,
+                      @CliOption(key = {"s"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String
+                              single)
             throws JsonProcessingException {
-        context.cancelDoubleCheck();
         try {
             String className = context.getCurrentClass();
             JBQuery query = new JBQuery(className);
@@ -208,7 +210,6 @@ public class ObjectCommands implements CommandMarker {
 
     @CliCommand(value = "del", help = "Delete object.")
     public void delete(@CliOption(key = {""}, mandatory = true, help = "Object id.") final String id) {
-        context.cancelDoubleCheck();
         String className = context.getCurrentClass();
         try {
             JBObject object = JBObject.createWithOutData(className, id);
@@ -223,17 +224,14 @@ public class ObjectCommands implements CommandMarker {
 
     @CliCommand(value = "url", help = "Show object url.")
     public void url() {
-        context.cancelDoubleCheck();
         try {
-
             String className = context.getCurrentClass();
-            PropertiesUtil properties = new PropertiesUtil();
-            System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("GET    ").reset().a(properties.getHost() + "object/" + className));
-            System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("GET    ").reset().a(properties.getHost() + "object/" + className + "/{id}"));
-            System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("POST    ").reset().a(properties.getHost() + "object/" + className));
-            System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("PUT    ").reset().a(properties.getHost() + "object/" + className + "/{id}"));
-            System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("DELETE    ").reset().a(properties.getHost() + "object/" + className + "/{id}"));
-        } catch (Exception e) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("GET    ").reset().a(getHost() + "object/" + className));
+            System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("GET    ").reset().a(getHost() + "object/" + className + "/{id}"));
+            System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("POST    ").reset().a(getHost() + "object/" + className));
+            System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("PUT    ").reset().a(getHost() + "object/" + className + "/{id}"));
+            System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("DELETE    ").reset().a(getHost() + "object/" + className + "/{id}"));
+        } catch (Exception ignored) {
 
         }
     }
@@ -241,7 +239,6 @@ public class ObjectCommands implements CommandMarker {
     @CliCommand(value = "count", help = "Count objects in class.")
     public void count(@CliOption(key = {""}, mandatory = false, help = "Query condition.") final String where)
             throws JsonProcessingException {
-        context.cancelDoubleCheck();
         try {
             String className = context.getCurrentClass();
             JBQuery query = new JBQuery(className);

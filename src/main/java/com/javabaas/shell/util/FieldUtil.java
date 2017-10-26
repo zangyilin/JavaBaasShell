@@ -1,6 +1,6 @@
 package com.javabaas.shell.util;
 
-import com.javabaas.shell.entity.JBSFieldType;
+import com.javabaas.shell.entity.JBFieldType;
 
 /**
  * Created by Codi on 16/7/22.
@@ -10,31 +10,31 @@ public class FieldUtil {
     public static String getFieldType(int type) {
         String typeString = "";
         switch (type) {
-            case JBSFieldType.STRING:
+            case JBFieldType.STRING:
                 typeString = "<STRING>";
                 break;
-            case JBSFieldType.NUMBER:
+            case JBFieldType.NUMBER:
                 typeString = "<NUMBER>";
                 break;
-            case JBSFieldType.BOOLEAN:
+            case JBFieldType.BOOLEAN:
                 typeString = "<BOOLEAN>";
                 break;
-            case JBSFieldType.DATE:
+            case JBFieldType.DATE:
                 typeString = "<DATE>";
                 break;
-            case JBSFieldType.FILE:
+            case JBFieldType.FILE:
                 typeString = "<FILE>";
                 break;
-            case JBSFieldType.OBJECT:
+            case JBFieldType.OBJECT:
                 typeString = "<OBJECT>";
                 break;
-            case JBSFieldType.ARRAY:
+            case JBFieldType.ARRAY:
                 typeString = "<ARRAY>";
                 break;
-            case JBSFieldType.POINTER:
+            case JBFieldType.POINTER:
                 typeString = "<POINTER>";
                 break;
-            case JBSFieldType.GEOPOINT:
+            case JBFieldType.GEOPOINT:
                 typeString = "<GEOPOINT>";
                 break;
             default:

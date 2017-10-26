@@ -99,17 +99,20 @@ public class AsciiTableRenderer implements V2_TableRenderer {
         }
 
         //now adjust borders for top rule
-        BorderType[] array = RenderUtilities.getBorderTypes_TopRule((this.rows.size() > 1) ? this.rows.get(1) : null, this.rows.get(0).getOriginalRow(), table.getColumnCount());
+        BorderType[] array = RenderUtilities.getBorderTypes_TopRule((this.rows.size() > 1) ? this.rows.get(1) : null, this.rows.get(0)
+                .getOriginalRow(), table.getColumnCount());
         this.rows.get(0).setBorderTypes(array);
 
         //adjust border for bottom rule
-        array = RenderUtilities.getBorderTypes_BottomRule((this.rows.size() > 1) ? this.rows.get(this.rows.size() - 2) : null, this.rows.get(this.rows.size() - 1).getOriginalRow(), table.getColumnCount());
+        array = RenderUtilities.getBorderTypes_BottomRule((this.rows.size() > 1) ? this.rows.get(this.rows.size() - 2) : null, this.rows
+                .get(this.rows.size() - 1).getOriginalRow(), table.getColumnCount());
         this.rows.get(this.rows.size() - 1).setBorderTypes(array);
 
         //and now adjust borders for all mid rules
         if (this.rows.size() > 2) {
             for (int r = 1; r < this.rows.size() - 1; r++) {
-                array = RenderUtilities.getBorderTypes_MidRule(this.rows.get(r - 1), (r < this.rows.size() - 2) ? this.rows.get(r + 1) : null, this.rows.get(r).getOriginalRow(), table.getColumnCount());
+                array = RenderUtilities.getBorderTypes_MidRule(this.rows.get(r - 1), (r < this.rows.size() - 2) ? this.rows.get(r + 1) :
+                        null, this.rows.get(r).getOriginalRow(), table.getColumnCount());
                 this.rows.get(r).setBorderTypes(array);
             }
         }
@@ -221,11 +224,13 @@ public class AsciiTableRenderer implements V2_TableRenderer {
                             //add the current column width
                             width += cols[k];
                             //add row with proper alignment
-                            this.appendWithAlignment(alignment[k], ret, columns[i][k], width, this.paddingChar, padding[k], (i == (columns.length)));
+                            this.appendWithAlignment(alignment[k], ret, columns[i][k], width, this.paddingChar, padding[k], (i ==
+                                    (columns.length)));
                             span = 0;
                         }
                     } else {
-                        this.appendWithAlignment(alignment[k], ret, columns[i][k], cols[k], this.paddingChar, padding[k], (i == (columns.length - 1)));
+                        this.appendWithAlignment(alignment[k], ret, columns[i][k], cols[k], this.paddingChar, padding[k], (i == (columns
+                                .length - 1)));
                     }
                 }
             }
@@ -233,7 +238,8 @@ public class AsciiTableRenderer implements V2_TableRenderer {
         return ret;
     }
 
-    private void appendWithAlignment(char alignment, StrBuilder sb, String str, int width, char paddingChar, int padding, boolean isLastLine) {
+    private void appendWithAlignment(char alignment, StrBuilder sb, String str, int width, char paddingChar, int padding, boolean
+            isLastLine) {
         if (padding > 0) {
             width = width - padding * 2;
         }

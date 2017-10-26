@@ -4,6 +4,7 @@ import com.javabaas.javasdk.JBClazz;
 import com.javabaas.javasdk.JBException;
 import com.javabaas.javasdk.JBUtils;
 import com.javabaas.shell.common.CommandContext;
+import com.javabaas.shell.util.PromptUtil;
 import org.fusesource.jansi.Ansi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
@@ -33,7 +34,6 @@ public class ClassCommands implements CommandMarker {
 
     @CliCommand(value = "classes", help = "Show class list.")
     public void find() {
-        context.cancelDoubleCheck();
         try {
             //显示列表
             List<JBClazz> list = JBClazz.list();
@@ -45,7 +45,6 @@ public class ClassCommands implements CommandMarker {
 
     @CliCommand(value = "set", help = "Set current class.")
     public void find(@CliOption(key = {""}, mandatory = false, help = "class name") final String name) {
-        context.cancelDoubleCheck();
         if (name == null) {
             //重置当前类
             context.setCurrentClass(null);
@@ -64,36 +63,20 @@ public class ClassCommands implements CommandMarker {
 
     @CliCommand(value = "class del", help = "Delete class.")
     public void delete(@CliOption(key = {""}, mandatory = true) final String name) {
-        context.cancelDoubleCheck();
-        //显示类信息
-        try {
-            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("Do you really want to delete? (Y/N)"));
-            context.setDoubleCheck(new DoubleCheckListener() {
-                @Override
-                public void confirm() {
-                    try {
-                        JBClazz clazz = new JBClazz(name);
-                        clazz.delete();
-                        context.setCurrentClass(null);
-                        System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Class deleted.").reset());
-                    } catch (JBException e) {
-                        System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-                    }
-                }
-
-                @Override
-                public void cancel() {
-
-                }
-            });
-        } catch (HttpClientErrorException e) {
-            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+        if (PromptUtil.check("是否确认删除类?")) {
+            try {
+                JBClazz clazz = new JBClazz(name);
+                clazz.delete();
+                context.setCurrentClass(null);
+                System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("删除成功").reset());
+            } catch (JBException e) {
+                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
+            }
         }
     }
 
     @CliCommand(value = "class add", help = "Add field.")
     public void add(@CliOption(key = {""}, mandatory = true) final String name) {
-        context.cancelDoubleCheck();
         try {
             JBClazz clazz = new JBClazz(name);
             clazz.save();
@@ -107,7 +90,6 @@ public class ClassCommands implements CommandMarker {
 
     @CliCommand(value = "class export", help = "Export tha class.")
     public void export(@CliOption(key = {""}, mandatory = true) final String name) {
-        context.cancelDoubleCheck();
         try {
             JBClazz.JBClazzExport clazzExport = JBClazz.export(name);
             System.out.println(JBUtils.writeValueAsString(clazzExport));
@@ -120,7 +102,6 @@ public class ClassCommands implements CommandMarker {
 
     @CliCommand(value = "class import", help = "Import tha class.")
     public void importData(@CliOption(key = {""}, help = "clazz", mandatory = true) final String clazz) {
-        context.cancelDoubleCheck();
         try {
             JBClazz.importData(clazz);
             System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Clazz imported.").reset());

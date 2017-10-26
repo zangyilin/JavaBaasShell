@@ -15,8 +15,6 @@ public class SignUtil {
 
     @Autowired
     private CommandContext commandContext;
-    @Autowired
-    private PropertiesUtil propertiesUtil;
 
     public String getTimestamp() {
         return String.valueOf(new Date().getTime());
@@ -31,7 +29,7 @@ public class SignUtil {
     }
 
     public String getAdminSign(String timestamp, String nonce) {
-        return DigestUtils.md5DigestAsHex((propertiesUtil.getKey() + ":" + timestamp + ":" + nonce).getBytes());
+        return DigestUtils.md5DigestAsHex((PropertiesUtil.getKey() + ":" + timestamp + ":" + nonce).getBytes());
     }
 
     public String getAppId() {

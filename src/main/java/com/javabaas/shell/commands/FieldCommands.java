@@ -5,8 +5,8 @@ import com.javabaas.javasdk.JBException;
 import com.javabaas.javasdk.JBField;
 import com.javabaas.javasdk.JBUtils;
 import com.javabaas.shell.common.CommandContext;
-import com.javabaas.shell.entity.JBSFieldType;
-import com.javabaas.shell.util.ASKUtil;
+import com.javabaas.shell.entity.JBFieldType;
+import com.javabaas.shell.util.PromptUtil;
 import org.fusesource.jansi.Ansi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
@@ -40,35 +40,34 @@ public class FieldCommands implements CommandMarker {
      */
     @CliCommand(value = "fields", help = "Show field list in class.")
     public void find() {
-        context.cancelDoubleCheck();
         try {
             String className = context.getCurrentClass();
             List<JBField> list = JBField.list(className);
             list.forEach(baasField -> {
                 String typeString;
                 switch (baasField.getType()) {
-                    case JBSFieldType.STRING:
+                    case JBFieldType.STRING:
                         typeString = "<STRING>  ";
                         break;
-                    case JBSFieldType.NUMBER:
+                    case JBFieldType.NUMBER:
                         typeString = "<NUMBER>  ";
                         break;
-                    case JBSFieldType.BOOLEAN:
+                    case JBFieldType.BOOLEAN:
                         typeString = "<BOOLEAN> ";
                         break;
-                    case JBSFieldType.DATE:
+                    case JBFieldType.DATE:
                         typeString = "<DATE>    ";
                         break;
-                    case JBSFieldType.FILE:
+                    case JBFieldType.FILE:
                         typeString = "<FILE>    ";
                         break;
-                    case JBSFieldType.OBJECT:
+                    case JBFieldType.OBJECT:
                         typeString = "<OBJECT>  ";
                         break;
-                    case JBSFieldType.ARRAY:
+                    case JBFieldType.ARRAY:
                         typeString = "<ARRAY>   ";
                         break;
-                    case JBSFieldType.POINTER:
+                    case JBFieldType.POINTER:
                         typeString = "<POINTER> ";
                         break;
                     default:
@@ -78,7 +77,8 @@ public class FieldCommands implements CommandMarker {
                 String internalString = baasField.isInternal() ? "I" : " ";
                 String securityString = baasField.isSecurity() ? "S" : " ";
                 String requiredString = baasField.isRequired() ? "R" : " ";
-                System.out.println(Ansi.ansi().fg(Ansi.Color.YELLOW).a(internalString).fg(Ansi.Color.RED).a(securityString).fg(Ansi.Color.GREEN).a(requiredString).fg(Ansi.Color.CYAN).a(typeString).reset().a(baasField.getName()));
+                System.out.println(Ansi.ansi().fg(Ansi.Color.YELLOW).a(internalString).fg(Ansi.Color.RED).a(securityString).fg(Ansi.Color
+                        .GREEN).a(requiredString).fg(Ansi.Color.CYAN).a(typeString).reset().a(baasField.getName()));
             });
         } catch (JBException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
@@ -87,53 +87,36 @@ public class FieldCommands implements CommandMarker {
 
     @CliCommand(value = "field del", help = "Delete field.")
     public void delete(@CliOption(key = {""}, mandatory = true) final String fieldName) {
-        context.cancelDoubleCheck();
         String className = context.getCurrentClass();
         //显示类信息
-        try {
-            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("Do you really want to delete? (Y/N)"));
-            context.setDoubleCheck(new DoubleCheckListener() {
-                @Override
-                public void confirm() {
-                    JBField field = new JBField();
-                    field.setClazz(new JBClazz(className));
-                    field.setName(fieldName);
-                    try {
-                        field.delete();
-                        System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Field deleted.").reset());
-                    } catch (JBException e) {
-                        System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-                    }
-
-                }
-
-                @Override
-                public void cancel() {
-
-                }
-            });
-        } catch (HttpClientErrorException e) {
-            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+        if (PromptUtil.check("是否确认删除字段?")) {
+            JBField field = new JBField();
+            field.setClazz(new JBClazz(className));
+            field.setName(fieldName);
+            try {
+                field.delete();
+                System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("删除成功").reset());
+            } catch (JBException e) {
+                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
+            }
         }
     }
 
     @CliCommand(value = "field add", help = "Add field.")
     public void add(@CliOption(key = {""}, mandatory = false) final String name) {
-        context.cancelDoubleCheck();
         String className = context.getCurrentClass();
         try {
             String fieldName;
             if (JBUtils.isEmpty(name)) {
-                fieldName = ASKUtil.askString("请输入字段名称:");
+                fieldName = PromptUtil.string("请输入字段名称:");
                 if (JBUtils.isEmpty(fieldName)) {
-                    System.out.println("Faild Add Field!");
                     return;
                 }
             } else {
                 fieldName = name;
             }
             List<String> types = getFieldTypes();
-            int type = ASKUtil.askNumber(types, "请选择Field type，默认为STRING", 1);
+            int type = PromptUtil.choose(types, "请选择FieldType 默认为STRING", 1);
             if (type == 0) {
                 System.out.println("Faild Add Field!");
                 return;
@@ -170,7 +153,6 @@ public class FieldCommands implements CommandMarker {
     }
 
     private void setSecurity(String fieldName, boolean security) {
-        context.cancelDoubleCheck();
         String className = context.getCurrentClass();
         try {
             JBField field = new JBField();
@@ -187,7 +169,6 @@ public class FieldCommands implements CommandMarker {
     }
 
     private void setRequired(String fieldName, boolean required) {
-        context.cancelDoubleCheck();
         String className = context.getCurrentClass();
         try {
             JBField field = new JBField();
@@ -208,7 +189,6 @@ public class FieldCommands implements CommandMarker {
 
     @CliCommand(value = "field type", help = "Show field Types.")
     public void fieldType() {
-        context.cancelDoubleCheck();
         System.out.println(Ansi.ansi().fg(Ansi.Color.WHITE).a("1").fg(Ansi.Color.CYAN).a(" STRING").reset());
         System.out.println(Ansi.ansi().fg(Ansi.Color.WHITE).a("2").fg(Ansi.Color.CYAN).a(" NUMBER").reset());
         System.out.println(Ansi.ansi().fg(Ansi.Color.WHITE).a("3").fg(Ansi.Color.CYAN).a(" BOOLEAN").reset());

@@ -157,13 +157,15 @@ public class ArrayTransformations {
     }
 
     /**
-     * Takes an content array (of strings) and returns a string array with wrapped lines of max length using {@link #WRAP_LINES(int, Object, boolean)}.
+     * Takes an content array (of strings) and returns a string array with wrapped lines of max length using
+     * {@link #WRAP_LINES(int, Object, boolean)}.
      * The wrapping is done using StringUtils and WordUtils so that words are not broken into characters.
      *
      * @param length     max length of a string in the returned array
      * @param ar         array with one line per array entry, null and empty objects are allowed
      * @param singleLine
-     * @return string array with wrapped strings: null of input object was null or its toString() returned null, empty array if empty string, array with lines of wrappings otherwise
+     * @return string array with wrapped strings: null of input object was null or its toString() returned null, empty array if empty
+     * string, array with lines of wrappings otherwise
      */
     public static final String[] WRAP_LINES(final int length, String[] ar, boolean singleLine) {
         if (ar == null) {
@@ -188,7 +190,8 @@ public class ArrayTransformations {
      * @param length     max length of a string in the returned array
      * @param obj        input object, null and empty objects are allowed
      * @param singleLine
-     * @return string array with wrapped strings: null of input object was null or its toString() returned null, empty array if empty string, array with lines of wrappings otherwise
+     * @return string array with wrapped strings: null of input object was null or its toString() returned null, empty array if empty
+     * string, array with lines of wrappings otherwise
      */
     public static final String[] WRAP_LINES(final int length, Object obj, boolean singleLine) {
         if (obj == null || obj.toString() == null) {

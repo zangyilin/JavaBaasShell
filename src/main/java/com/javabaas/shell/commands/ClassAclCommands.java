@@ -32,7 +32,6 @@ public class ClassAclCommands implements CommandMarker {
 
     @CliCommand(value = "acls", help = "get acl")
     public void getACL() throws JsonProcessingException {
-        context.cancelDoubleCheck();
         String className = context.getCurrentClass();
         //显示类信息
         try {
@@ -48,7 +47,6 @@ public class ClassAclCommands implements CommandMarker {
     @CliCommand(value = "acl set", help = "class acl")
     public void setACL(@CliOption(key = {""}, mandatory = true, help = "Object by json.") final String acl)
             throws JsonProcessingException {
-        context.cancelDoubleCheck();
         String className = context.getCurrentClass();
         try {
             JBClazz clazz = new JBClazz(className);
