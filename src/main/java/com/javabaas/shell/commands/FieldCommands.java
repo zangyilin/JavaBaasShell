@@ -103,7 +103,7 @@ public class FieldCommands implements CommandMarker {
     }
 
     @CliCommand(value = "field add", help = "Add field.")
-    public void add(@CliOption(key = {""}, mandatory = false) final String name) {
+    public void add(@CliOption(key = {""}) final String name) {
         String className = context.getCurrentClass();
         try {
             String fieldName;
@@ -116,15 +116,15 @@ public class FieldCommands implements CommandMarker {
                 fieldName = name;
             }
             List<String> types = getFieldTypes();
-            int type = PromptUtil.choose(types, "请选择FieldType 默认为STRING", 1);
+            int type = PromptUtil.choose(types, "请选择FieldType", 1);
             if (type == 0) {
-                System.out.println("Faild Add Field!");
+                System.out.println("创建字段失败");
                 return;
             }
             JBField field = new JBField(type, fieldName);
             field.setClazz(new JBClazz(className));
             field.save();
-            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Field added.").reset());
+            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("创建字段成功").reset());
         } catch (JBException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
@@ -160,7 +160,7 @@ public class FieldCommands implements CommandMarker {
             field.setName(fieldName);
             field.setSecurity(security);
             field.update();
-            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Field security updated.").reset());
+            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("更新成功").reset());
         } catch (JBException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
@@ -177,7 +177,7 @@ public class FieldCommands implements CommandMarker {
             field.setRequired(required);
             try {
                 field.update();
-                System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Field required updated.").reset());
+                System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("更新成功").reset());
             } catch (JBException e) {
                 System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
             }

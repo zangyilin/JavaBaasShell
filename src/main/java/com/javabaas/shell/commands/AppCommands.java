@@ -53,7 +53,7 @@ public class AppCommands implements CommandMarker {
             JBApp app = new JBApp();
             app.setName(name);
             app.save();
-            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("App added.").reset());
+            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("应用创建成功.").reset());
             set(name);
         } catch (HttpClientErrorException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
@@ -86,7 +86,7 @@ public class AppCommands implements CommandMarker {
     }
 
     @CliCommand(value = "use", help = "Set current app.")
-    public void set(@CliOption(key = {""}, mandatory = false, help = "app name") final String name) {
+    public void set(@CliOption(key = {""}, help = "app name") final String name) {
         if (name == null) {
             //重置当前应用
             context.setCurrentApp(null);
@@ -105,7 +105,7 @@ public class AppCommands implements CommandMarker {
                 });
                 //未找到应用
                 if (!flag[0]) {
-                    System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("App not found!").reset());
+                    System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("未找到应用!").reset());
                 }
             } catch (HttpClientErrorException e) {
                 System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
@@ -131,8 +131,7 @@ public class AppCommands implements CommandMarker {
     public void importData(@CliOption(key = {""}, mandatory = true, help = "app name") final String app) {
         try {
             JBApp.importData(app);
-//            rest.postForObject(properties.getHost() + "admin/app/import", app, String.class);
-            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("App imported.").reset());
+            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("导入成功").reset());
         } catch (HttpClientErrorException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
         }
@@ -159,7 +158,7 @@ public class AppCommands implements CommandMarker {
     public void setAccount() throws JsonProcessingException {
         try {
             List<String> accountTypes = getAccountTypes();
-            int accountType = PromptUtil.choose(accountTypes, "请选择Account Type， 默认为push", 1);
+            int accountType = PromptUtil.choose(accountTypes, "请选择AccountType", 0);
             if (accountType == 0) {
                 return;
             }
@@ -177,7 +176,7 @@ public class AppCommands implements CommandMarker {
             account.setSecret(secret);
 
             JBApp.setAccount(JBApp.AccountType.getType(accountType), account);
-            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Object updated.").reset());
+            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("更新成功").reset());
         } catch (HttpClientErrorException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
         }

@@ -53,7 +53,7 @@ public class ClassAclCommands implements CommandMarker {
             JBClazz.JBClazzAcl clazzAcl = JBUtils.readValue(acl, JBClazz.JBClazzAcl.class);
             clazz.setAcl(clazzAcl);
             clazz.updateClazzAcl();
-            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("ACL updated.").reset());
+            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("ACL更新成功").reset());
         } catch (JBException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {

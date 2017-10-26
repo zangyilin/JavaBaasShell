@@ -49,7 +49,7 @@ public class ObjectCommands implements CommandMarker {
             JBObject object = new JBObject(className);
             JBUtils.copyPropertiesFromMapToJBObject(object, map);
             object.save();
-            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Object added.").reset());
+            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("对象创建.").reset());
         } catch (JBException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
@@ -62,7 +62,7 @@ public class ObjectCommands implements CommandMarker {
             throws JsonProcessingException {
         String[] inputs = input.split(" ");
         if (inputs.length < 2) {
-            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("No object!").reset());
+            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("需要json对象!").reset());
             return;
         }
         try {
@@ -93,8 +93,8 @@ public class ObjectCommands implements CommandMarker {
     }
 
     @CliCommand(value = "list", help = "Show objects in class.")
-    public void list(@CliOption(key = {""}, mandatory = false, help = "Query condition.") final String where,
-                     @CliOption(key = {"skip"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "0") final
+    public void list(@CliOption(key = {""}, help = "Query condition.") final String where,
+                     @CliOption(key = {"skip"}, unspecifiedDefaultValue = "0", specifiedDefaultValue = "0") final
                      String skip)
             throws JsonProcessingException {
         try {
@@ -116,16 +116,16 @@ public class ObjectCommands implements CommandMarker {
     }
 
     @CliCommand(value = "table", help = "Show objects table")
-    public void table(@CliOption(key = {""}, mandatory = false, help = "Query condition.") final String where,
-                      @CliOption(key = {"skip"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "0") final
+    public void table(@CliOption(key = {""}, help = "Query condition.") final String where,
+                      @CliOption(key = {"skip"}, unspecifiedDefaultValue = "0", specifiedDefaultValue = "0") final
                       String skip,
-                      @CliOption(key = {"t"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String
+                      @CliOption(key = {"t"}, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String
                               time,
-                      @CliOption(key = {"p"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String
+                      @CliOption(key = {"p"}, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String
                               plat,
-                      @CliOption(key = {"a"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String
+                      @CliOption(key = {"a"}, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String
                               acl,
-                      @CliOption(key = {"s"}, mandatory = false, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String
+                      @CliOption(key = {"s"}, unspecifiedDefaultValue = "0", specifiedDefaultValue = "1") final String
                               single)
             throws JsonProcessingException {
         try {
@@ -176,10 +176,6 @@ public class ObjectCommands implements CommandMarker {
                 if (plat.equals("1")) {
                     cols.add("");
                 }
-//                if (acl.equals("1")) {
-//                    cols.add(baasObject.getAcl());
-//                }
-
                 fields.forEach(field -> {
                     Object value = baasObject.get(field.getName());
                     if (value == null) {
@@ -214,7 +210,7 @@ public class ObjectCommands implements CommandMarker {
         try {
             JBObject object = JBObject.createWithOutData(className, id);
             object.delete();
-            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Object deleted.").reset());
+            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("对象删除.").reset());
         } catch (JBException e) {
             System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
         } catch (HttpClientErrorException e) {
@@ -237,7 +233,7 @@ public class ObjectCommands implements CommandMarker {
     }
 
     @CliCommand(value = "count", help = "Count objects in class.")
-    public void count(@CliOption(key = {""}, mandatory = false, help = "Query condition.") final String where)
+    public void count(@CliOption(key = {""}, help = "Query condition.") final String where)
             throws JsonProcessingException {
         try {
             String className = context.getCurrentClass();

@@ -76,9 +76,18 @@ public class ClassCommands implements CommandMarker {
     }
 
     @CliCommand(value = "class add", help = "Add field.")
-    public void add(@CliOption(key = {""}, mandatory = true) final String name) {
+    public void add(@CliOption(key = {""}) final String name) {
         try {
-            JBClazz clazz = new JBClazz(name);
+            String className;
+            if (JBUtils.isEmpty(name)) {
+                className = PromptUtil.string("请输入类名称:");
+                if (JBUtils.isEmpty(className)) {
+                    return;
+                }
+            } else {
+                className = name;
+            }
+            JBClazz clazz = new JBClazz(className);
             clazz.save();
             System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("Class added.").reset());
         } catch (JBException e) {

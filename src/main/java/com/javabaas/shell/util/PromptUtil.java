@@ -25,6 +25,12 @@ public class PromptUtil {
      */
     public static int choose(List<String> values, String message, int defaultValue) {
         try {
+            if (defaultValue == 0) {
+                //无默认值
+            } else {
+                //有默认值
+                message = message + " 默认为" + values.get(defaultValue - 1);
+            }
             String input = showList(values, message);
             if (JBUtils.isEmpty(input)) {
                 return defaultValue;
