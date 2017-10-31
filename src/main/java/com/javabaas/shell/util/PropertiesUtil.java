@@ -1,52 +1,38 @@
 package com.javabaas.shell.util;
 
-import java.io.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Properties;
 
 /**
- * Created by Codi on 16/7/21.
+ * Created by Codi on 2017/10/27.
  */
 public class PropertiesUtil {
 
-    private static final String DEFAULT_HOST = "http://127.0.0.1:8080/api/";
-    private static final String DEFAULT_KEY = "JavaBaas";
-    private static String host;
-    private static String key;
+    private static final String CONFIG_FILE_NAME = "/config.properties";
 
-    private PropertiesUtil() {
-    }
-
-    static {
-        Properties properties = new Properties();
-        InputStream inputStream = null;
+    public static PropertiesStorage loadProperties() {
         try {
-            //首先从同目录下加载
-            inputStream = new FileInputStream(getPath() + "/config.properties");
-        } catch (FileNotFoundException ignored) {
-        }
-        if (inputStream == null) {
-            //文件加载失败 从资源文件处加载
-            inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties");
-        }
-        if (inputStream != null) {
-            try {
-                properties.load(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            key = properties.getProperty("key");
-            host = properties.getProperty("host");
+            FileInputStream inputStream = new FileInputStream(getPath() + CONFIG_FILE_NAME);
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(inputStream, PropertiesStorage.class);
+        } catch (IOException exception) {
+            return null;
         }
     }
 
-    public static String getHost() {
-        return host != null ? host : DEFAULT_HOST;
-    }
-
-    public static String getKey() {
-        return key != null ? key : DEFAULT_KEY;
+    public static void saveProperties(PropertiesStorage properties) {
+        File file = new File(getPath() + CONFIG_FILE_NAME);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            mapper.writeValue(file, properties);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static String getPath() {
@@ -67,4 +53,5 @@ public class PropertiesUtil {
         filePath = file.getAbsolutePath();
         return filePath;
     }
+
 }

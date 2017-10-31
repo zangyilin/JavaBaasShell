@@ -29,7 +29,7 @@ public class SignUtil {
     }
 
     public String getAdminSign(String timestamp, String nonce) {
-        return DigestUtils.md5DigestAsHex((PropertiesUtil.getKey() + ":" + timestamp + ":" + nonce).getBytes());
+        return DigestUtils.md5DigestAsHex((commandContext.getCurrentApp().getKey() + ":" + timestamp + ":" + nonce).getBytes());
     }
 
     public String getAppId() {

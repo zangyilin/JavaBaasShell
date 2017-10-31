@@ -131,22 +131,9 @@ public class AsciiTableRenderer implements V2_TableRenderer {
                     ret.add(this.renderRuleRow(this.rows.get(i), cols, null));
                 }
             } else {
-                System.err.println("ERROR in renderering");//TODO
+                System.err.println("ERROR in renderering");
             }
         }
-
-//		for(ProcessedRow row : this.rows){
-//			V2_Row original = row.getOriginalRow();
-//			if(original instanceof ContentRow){
-//				ret.add(this.renderContentRow(row, cols));
-//			}
-//			else if(original instanceof RuleRow){
-//				ret.add(this.renderRuleRow(row, cols, null));
-//			}
-//			else{
-//				System.err.println("ERROR in renderering");//TODO
-//			}
-//		}
 
         return new RenderedTable(ret);
     }
@@ -294,7 +281,7 @@ public class AsciiTableRenderer implements V2_TableRenderer {
                 sb.append(StringUtils.join(ar));
             }
         } else {
-            System.err.println("ERROR RENDER ALIGNMENT");//TODO
+            System.err.println("ERROR RENDER ALIGNMENT");
         }
 
         for (int i = 0; i < padding; i++) {

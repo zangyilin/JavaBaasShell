@@ -23,7 +23,7 @@ public class ArrayTransformations {
      */
     public static final <T> StrBuilder ARRAY_TO_STRING(T[][] ar) {
         StrBuilder ret = new StrBuilder(50);
-        for (int row = 0; row < ar.length; row++) { //TODO not null save
+        for (int row = 0; row < ar.length; row++) {
             if (ar[row] == null) {
                 ret.append("[").append(row).appendln("]: null");
             } else if (ar[row].length == 0) {
@@ -89,7 +89,7 @@ public class ArrayTransformations {
     public static final String[][] NORMALISE_ARRAY(final int length, String[][] ar) {
         int width = 0;
         //get the length of the longest array, use that as width in normalization
-        for (int row = 0; row < ar.length; row++) { //TODO not null safe
+        for (int row = 0; row < ar.length; row++) {
             width = Math.max(width, ArrayUtils.getLength(ar[row]));
         }
         if (width == 0) {
