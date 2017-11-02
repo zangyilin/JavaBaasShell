@@ -34,18 +34,26 @@ public class AppCommands implements CommandMarker {
     @CliCommand(value = "export", help = "导出应用结构")
     public void export() {
         if (context.isAppAvailable()) {
-            JBApp app = context.getCurrentApp();
-            JBApp.JBAppExport appExport = JBApp.export(app.getId());
-            message(appExport);
+            try {
+                JBApp app = context.getCurrentApp();
+                JBApp.JBAppExport appExport = JBApp.export(app.getId());
+                message(appExport);
+            } catch (JBException e) {
+                error(e.getMessage());
+            }
         }
     }
 
     @CliCommand(value = "info", help = "获取应用信息")
     public void appInfo() {
         if (context.isAppAvailable()) {
-            JBApp app = context.getCurrentApp();
-            JBApp jbApp = JBApp.get(app.getId());
-            message(jbApp);
+            try {
+                JBApp app = context.getCurrentApp();
+                JBApp jbApp = JBApp.get(app.getId());
+                message(jbApp);
+            } catch (JBException e) {
+                error(e.getMessage());
+            }
         }
     }
 

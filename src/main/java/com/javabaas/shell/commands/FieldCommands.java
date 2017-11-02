@@ -13,10 +13,12 @@ import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.javabaas.shell.util.Print.error;
+import static com.javabaas.shell.util.Print.success;
 
 /**
  * Created by Staryet on 15/8/20.
@@ -78,7 +80,7 @@ public class FieldCommands implements CommandMarker {
                             .GREEN).a(requiredString).fg(Ansi.Color.CYAN).a(typeString).reset().a(baasField.getName()));
                 });
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
+                error(e.getMessage());
             }
         }
     }
@@ -94,9 +96,9 @@ public class FieldCommands implements CommandMarker {
                 field.setName(fieldName);
                 try {
                     field.delete();
-                    System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("删除成功").reset());
+                    success("删除成功");
                 } catch (JBException e) {
-                    System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
+                    error(e.getMessage());
                 }
             }
         }
@@ -125,11 +127,9 @@ public class FieldCommands implements CommandMarker {
                 JBField field = new JBField(type, fieldName);
                 field.setClazz(new JBClazz(className));
                 field.save();
-                System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("创建字段成功").reset());
+                success("创建字段成功");
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-            } catch (HttpClientErrorException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+                error(e.getMessage());
             }
         }
     }
@@ -170,30 +170,23 @@ public class FieldCommands implements CommandMarker {
             field.setName(fieldName);
             field.setSecurity(security);
             field.update();
-            System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("更新成功").reset());
+            success("更新成功");
         } catch (JBException e) {
-            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-        } catch (HttpClientErrorException e) {
-            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+            error(e.getMessage());
         }
     }
 
     private void setRequired(String fieldName, boolean required) {
         String className = context.getCurrentClass();
+        JBField field = new JBField();
+        field.setClazz(new JBClazz(className));
+        field.setName(fieldName);
+        field.setRequired(required);
         try {
-            JBField field = new JBField();
-            field.setClazz(new JBClazz(className));
-            field.setName(fieldName);
-            field.setRequired(required);
-            try {
-                field.update();
-                System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("更新成功").reset());
-            } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-            }
-
-        } catch (HttpClientErrorException e) {
-            System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+            field.update();
+            success("更新成功");
+        } catch (JBException e) {
+            error(e.getMessage());
         }
     }
 

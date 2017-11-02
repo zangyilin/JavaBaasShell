@@ -5,16 +5,16 @@ import com.javabaas.javasdk.JBException;
 import com.javabaas.javasdk.JBUtils;
 import com.javabaas.shell.common.CommandContext;
 import com.javabaas.shell.util.PromptUtil;
-import org.fusesource.jansi.Ansi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.javabaas.shell.util.Print.*;
 
 /**
  * Created by Staryet on 15/8/20.
@@ -33,9 +33,9 @@ public class ClassCommands implements CommandMarker {
             try {
                 //显示列表
                 List<JBClazz> list = JBClazz.list();
-                list.forEach(clazz -> System.out.println(clazz.getName() + "(" + clazz.getCount() + ")"));
+                list.forEach(clazz -> message(clazz.getName() + "(" + clazz.getCount() + ")"));
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
+                error(e.getMessage());
             }
         }
     }
@@ -43,32 +43,31 @@ public class ClassCommands implements CommandMarker {
     @CliCommand(value = "set", help = "设置当前类")
     public void set(@CliOption(key = {""}, help = "class name") final String name) {
         if (context.isAppAvailable()) {
-            if (name == null) {
-                List<JBClazz> list = JBClazz.list();
-                List<String> values = new LinkedList<>();
-                for (JBClazz clazz : list) {
-                    values.add(clazz.getName());
-                }
-                int index = PromptUtil.choose(values, "请选择类:", 0);
-                if (index == 0) {
-                    //重置当前类
-                    context.setCurrentClass(null);
+            try {
+                if (name == null) {
+                    List<JBClazz> list = JBClazz.list();
+                    List<String> values = new LinkedList<>();
+                    for (JBClazz clazz : list) {
+                        values.add(clazz.getName());
+                    }
+                    int index = PromptUtil.choose(values, "请选择类:", 0);
+                    if (index == 0) {
+                        //重置当前类
+                        context.setCurrentClass(null);
+                    } else {
+                        String className = list.get(index - 1).getName();
+                        context.setCurrentClass(list.get(index - 1).getName());
+                        success("设置当前类为 " + className);
+                    }
                 } else {
-                    String className = list.get(index - 1).getName();
-                    context.setCurrentClass(list.get(index - 1).getName());
-                    System.out.println(Ansi.ansi().a("设置当前类为 ").fg(Ansi.Color.GREEN).a(className).reset());
-                }
-            } else {
-                try {
                     JBClazz.get(name);
-                    System.out.println(Ansi.ansi().a("设置当前类为 ").fg(Ansi.Color.GREEN).a(name).reset());
+                    success("设置当前类为 " + name);
                     context.setCurrentClass(name);
-                } catch (JBException e) {
-                    System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-                } catch (HttpClientErrorException e) {
-                    System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
                 }
+            } catch (JBException e) {
+                error(e.getMessage());
             }
+
         }
     }
 
@@ -80,9 +79,9 @@ public class ClassCommands implements CommandMarker {
                     JBClazz clazz = new JBClazz(name);
                     clazz.delete();
                     context.setCurrentClass(null);
-                    System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("删除成功").reset());
+                    success("删除成功");
                 } catch (JBException e) {
-                    System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
+                    error(e.getMessage());
                 }
             }
         }
@@ -103,11 +102,9 @@ public class ClassCommands implements CommandMarker {
                 }
                 JBClazz clazz = new JBClazz(className);
                 clazz.save();
-                System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("类创建成功").reset());
+                success("类创建成功");
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-            } catch (HttpClientErrorException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+                error(e.getMessage());
             }
         }
     }
@@ -117,11 +114,9 @@ public class ClassCommands implements CommandMarker {
         if (context.isAppAvailable()) {
             try {
                 JBClazz.JBClazzExport clazzExport = JBClazz.export(name);
-                System.out.println(JBUtils.writeValueAsString(clazzExport));
+                message(JBUtils.writeValueAsString(clazzExport));
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-            } catch (HttpClientErrorException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+                error(e.getMessage());
             }
         }
     }
@@ -131,11 +126,9 @@ public class ClassCommands implements CommandMarker {
         if (context.isAppAvailable()) {
             try {
                 JBClazz.importData(clazz);
-                System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("类导入成功").reset());
+                success("类导入成功");
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-            } catch (HttpClientErrorException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+                error(e.getMessage());
             }
         }
     }

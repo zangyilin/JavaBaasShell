@@ -5,13 +5,13 @@ import com.javabaas.javasdk.JBClazz;
 import com.javabaas.javasdk.JBException;
 import com.javabaas.javasdk.JBUtils;
 import com.javabaas.shell.common.CommandContext;
-import org.fusesource.jansi.Ansi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
+
+import static com.javabaas.shell.util.Print.*;
 
 /**
  * Created by Staryet on 15/8/20.
@@ -31,11 +31,9 @@ public class ClassAclCommands implements CommandMarker {
             //显示类信息
             try {
                 JBClazz clazz = JBClazz.get(className);
-                System.out.println(clazz.getAcl());
+                message(clazz.getAcl());
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-            } catch (HttpClientErrorException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+                error(e.getMessage());
             }
         }
     }
@@ -50,11 +48,9 @@ public class ClassAclCommands implements CommandMarker {
                 JBClazz.JBClazzAcl clazzAcl = JBUtils.readValue(acl, JBClazz.JBClazzAcl.class);
                 clazz.setAcl(clazzAcl);
                 clazz.updateClazzAcl();
-                System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("ACL更新成功").reset());
+                success("ACL更新成功");
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-            } catch (HttpClientErrorException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+                error(e.getMessage());
             }
         }
     }

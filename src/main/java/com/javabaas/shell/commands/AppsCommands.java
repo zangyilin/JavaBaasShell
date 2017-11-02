@@ -4,7 +4,6 @@ import com.javabaas.javasdk.JBApp;
 import com.javabaas.javasdk.JBException;
 import com.javabaas.shell.common.CommandContext;
 import com.javabaas.shell.util.PromptUtil;
-import org.fusesource.jansi.Ansi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
@@ -14,8 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.javabaas.shell.util.Print.error;
-import static com.javabaas.shell.util.Print.success;
+import static com.javabaas.shell.util.Print.*;
 
 /**
  * Created by Codi on 2017/10/30.
@@ -31,7 +29,7 @@ public class AppsCommands implements CommandMarker {
         if (context.isServerAvailable()) {
             try {
                 List<JBApp> list = JBApp.list();
-                list.forEach(o -> System.out.println(o.getName()));
+                list.forEach(o -> message(o.getName()));
             } catch (JBException e) {
                 error(e.getMessage());
             }
@@ -45,7 +43,7 @@ public class AppsCommands implements CommandMarker {
                 JBApp app = new JBApp();
                 app.setName(name);
                 app.save();
-                System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("应用创建成功.").reset());
+                success("应用创建成功");
                 use(name);
             } catch (JBException e) {
                 error(e.getMessage());
@@ -57,66 +55,71 @@ public class AppsCommands implements CommandMarker {
     public void delete(@CliOption(key = {""}, mandatory = true) final String name) {
         if (context.isServerAvailable()) {
             //显示类信息
-            List<JBApp> list = JBApp.list();
-            final boolean[] flag = {false};
-            list.forEach(app -> {
-                if (app.getName().equals(name)) {
-                    flag[0] = true;
-                    try {
-                        if (PromptUtil.check("确认要删除应用?")) {
-                            app.delete();
-                            context.setCurrentApp(null);
-                            success("删除成功");
+            try {
+                List<JBApp> list = JBApp.list();
+                final boolean[] flag = {false};
+                list.forEach(app -> {
+                    if (app.getName().equals(name)) {
+                        flag[0] = true;
+                        try {
+                            if (PromptUtil.check("确认要删除应用?")) {
+                                app.delete();
+                                context.setCurrentApp(null);
+                                success("删除成功");
+                            }
+                        } catch (JBException e) {
+                            error(e.getMessage());
                         }
-                    } catch (JBException e) {
-                        error(e.getMessage());
                     }
+                });
+                //未找到应用
+                if (!flag[0]) {
+                    error("未找到应用!");
                 }
-            });
-            //未找到应用
-            if (!flag[0]) {
-                error("未找到应用!");
+            } catch (JBException e) {
+                error(e.getMessage());
             }
+
         }
     }
 
     @CliCommand(value = "use", help = "设置当前应用")
     public void use(@CliOption(key = {""}, help = "app name") final String name) {
         if (context.isServerAvailable()) {
-            if (name == null) {
-                List<JBApp> list = JBApp.list();
-                List<String> values = new LinkedList<>();
-                for (JBApp app : list) {
-                    values.add(app.getName());
-                }
-                int index = PromptUtil.choose(values, "请选择应用:", 0);
-                if (index == 0) {
-                    //重置当前应用
-                    context.setCurrentApp(null);
-                } else {
-                    JBApp app = list.get(index - 1);
-                    context.setCurrentApp(app);
-                    System.out.println("设置当前应用为 " + Ansi.ansi().fg(Ansi.Color.GREEN).a(app.getName()).reset());
-                }
-            } else {
-                try {
+            try {
+                if (name == null) {
                     List<JBApp> list = JBApp.list();
-                    final boolean[] flag = {false};
-                    list.forEach(app -> {
+                    List<String> values = new LinkedList<>();
+                    for (JBApp app : list) {
+                        values.add(app.getName());
+                    }
+                    int index = PromptUtil.choose(values, "请选择应用:", 0);
+                    if (index == 0) {
+                        //重置当前应用
+                        context.setCurrentApp(null);
+                    } else {
+                        JBApp app = list.get(index - 1);
+                        context.setCurrentApp(app);
+                        message("设置当前应用为 " + app.getName());
+                    }
+                } else {
+                    List<JBApp> list = JBApp.list();
+                    boolean flag = false;
+                    for (JBApp app : list) {
                         if (app.getName().equals(name)) {
-                            JBApp jbApp = JBApp.get(app.getId());
-                            flag[0] = true;
-                            context.setCurrentApp(jbApp);
-                            System.out.println("设置当前应用为 " + Ansi.ansi().fg(Ansi.Color.GREEN).a(jbApp.getName()).reset());
+                            flag = true;
+                            context.setCurrentApp(app);
+                            message("设置当前应用为 " + app.getName());
+                            break;
                         }
-                    });
+                    }
                     //未找到应用
-                    if (!flag[0]) {
+                    if (!flag) {
                         error("未找到应用!");
                     }
-                } catch (JBException e) {
-                    error(e.getMessage());
                 }
+            } catch (JBException e) {
+                error(e.getMessage());
             }
         }
     }

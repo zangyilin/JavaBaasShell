@@ -15,11 +15,12 @@ import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static com.javabaas.shell.util.Print.*;
 
 /**
  * Created by Staryet on 15/8/21.
@@ -42,11 +43,9 @@ public class ObjectCommands implements CommandMarker {
                 JBObject object = new JBObject(className);
                 JBUtils.copyPropertiesFromMapToJBObject(object, map);
                 object.save();
-                System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("对象创建.").reset());
+                message("对象创建.");
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-            } catch (HttpClientErrorException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+                error(e.getMessage());
             }
         }
     }
@@ -57,7 +56,7 @@ public class ObjectCommands implements CommandMarker {
         if (context.isClassAvailable()) {
             String[] inputs = input.split(" ");
             if (inputs.length < 2) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("需要json对象!").reset());
+                error("需要json对象!");
                 return;
             }
             try {
@@ -66,11 +65,9 @@ public class ObjectCommands implements CommandMarker {
                 JBObject object = JBObject.createWithOutData(className, id);
                 JBUtils.copyPropertiesFromMapToJBObject(object, JBUtils.readValue(inputs[1], Map.class));
                 object.save();
-                System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("对象更新").reset());
+                success("对象更新");
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-            } catch (HttpClientErrorException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+                error(e.getMessage());
             }
         }
     }
@@ -83,9 +80,9 @@ public class ObjectCommands implements CommandMarker {
                 String className = context.getCurrentClass();
                 JBQuery query = new JBQuery(className);
                 JBObject object = query.get(id);
-                System.out.println(object);
+                message(object);
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
+                error(e.getMessage());
             }
         }
     }
@@ -106,11 +103,9 @@ public class ObjectCommands implements CommandMarker {
                     query.setWhereSting(where);
                 }
                 List<JBObject> list = query.find();
-                list.forEach(object -> System.out.println(object));
+                list.forEach(object -> message(object));
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-            } catch (HttpClientErrorException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+                error(e.getMessage());
             }
         }
     }
@@ -192,16 +187,14 @@ public class ObjectCommands implements CommandMarker {
                 rend.setTheme(V2_E_TableThemes.UTF_LIGHT.get());
                 rend.setWidth(width);
                 if (single.equals("0")) {
-                    System.out.println(rend.render(at));
+                    message(rend.render(at));
                 } else {
                     //单行显示
-                    System.out.println(rend.render(at, true));
+                    message(rend.render(at, true));
                 }
 
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-            } catch (HttpClientErrorException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+                error(e.getMessage());
             }
         }
     }
@@ -213,11 +206,9 @@ public class ObjectCommands implements CommandMarker {
             try {
                 JBObject object = JBObject.createWithOutData(className, id);
                 object.delete();
-                System.out.println(Ansi.ansi().fg(Ansi.Color.GREEN).a("对象删除.").reset());
+                success("对象删除.");
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-            } catch (HttpClientErrorException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+                error(e.getMessage());
             }
         }
     }
@@ -247,11 +238,9 @@ public class ObjectCommands implements CommandMarker {
                 JBQuery query = new JBQuery(className);
                 query.setWhereSting(where);
                 int count = query.count();
-                System.out.println(count);
+                message(count);
             } catch (JBException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getMessage()).reset());
-            } catch (HttpClientErrorException e) {
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(e.getResponseBodyAsString()).reset());
+                message(e.getMessage());
             }
         }
     }
