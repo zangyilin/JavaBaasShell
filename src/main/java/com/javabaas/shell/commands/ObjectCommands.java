@@ -219,11 +219,11 @@ public class ObjectCommands implements CommandMarker {
             try {
                 String className = context.getCurrentClass();
                 String host = context.getCurrentServer().getHost();
-                System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("GET    ").reset().a(host + "object/" + className));
-                System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("GET    ").reset().a(host + "object/" + className + "/{id}"));
-                System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("POST    ").reset().a(host + "object/" + className));
-                System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("PUT    ").reset().a(host + "object/" + className + "/{id}"));
-                System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("DELETE    ").reset().a(host + "object/" + className + "/{id}"));
+                System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("GET    ").reset().a(host + "/object/" + className));
+                System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("GET    ").reset().a(host + "/object/" + className + "/{id}"));
+                System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("POST    ").reset().a(host + "/object/" + className));
+                System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("PUT    ").reset().a(host + "/object/" + className + "/{id}"));
+                System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("DELETE    ").reset().a(host + "/object/" + className + "/{id}"));
             } catch (Exception ignored) {
             }
         }
