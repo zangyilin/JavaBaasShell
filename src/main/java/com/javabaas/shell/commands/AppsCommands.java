@@ -2,6 +2,7 @@ package com.javabaas.shell.commands;
 
 import com.javabaas.javasdk.JBApp;
 import com.javabaas.javasdk.JBException;
+import com.javabaas.javasdk.JBUtils;
 import com.javabaas.shell.common.CommandContext;
 import com.javabaas.shell.util.PromptUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -122,6 +124,52 @@ public class AppsCommands implements CommandMarker {
                 error(e.getMessage());
             }
         }
+    }
+
+    @CliCommand(value = "config", help = "设置appConfig")
+    public void setConfig() {
+        if (context.isAppAvailable()) {
+            try {
+                List<String> configTypes = getConfigTypes();
+                int configType = PromptUtil.choose(configTypes, "请选择所要设置的Config", 0);
+                if (configType == 0) {
+                    return;
+                }
+                String value = PromptUtil.string("请输入值");
+                if (JBUtils.isEmpty(value)) {
+                    return;
+                }
+                JBApp.JBAppConfig config = new JBApp.JBAppConfig();
+                config.setAppConfigKey(JBApp.JBAppConfigKey.values()[configType - 1]);
+                config.setValue(value);
+                JBApp.updateAppConfig(config);
+                success("设置成功");
+            } catch (JBException e) {
+                error(e.getMessage());
+            }
+        }
+    }
+
+    @CliCommand(value = "configs", help = "查看所有config的配置")
+    public void showConfigs() {
+        if (context.isAppAvailable()) {
+            try {
+                for (JBApp.JBAppConfigKey key : JBApp.JBAppConfigKey.values()) {
+                    String value = JBApp.getAppConfig(key);
+                    message(key.getName() + "(" + key.getKey() + ") : " + value);
+                }
+            } catch (JBException e) {
+                error(e.getMessage());
+            }
+        }
+    }
+
+    private List<String> getConfigTypes() {
+        List<String> list = new ArrayList<>();
+        for (JBApp.JBAppConfigKey type : JBApp.JBAppConfigKey.values()) {
+            list.add(type.getName() + " (" + type.getKey() + ")");
+        }
+        return list;
     }
 
 }

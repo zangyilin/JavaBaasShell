@@ -47,7 +47,7 @@ public class ServerCommands implements CommandMarker {
 
     @CliCommand(value = "server add", help = "增加服务器")
     public void add() {
-        String host = PromptUtil.string("请输入服务器地址:", "http://localhost:8080/api");
+        String host = PromptUtil.string("请输入服务器地址:", "http://127.0.0.1:8080/api");
         if (JBUtils.isEmpty(host)) {
             return;
         }

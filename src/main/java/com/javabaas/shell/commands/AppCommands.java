@@ -2,6 +2,7 @@ package com.javabaas.shell.commands;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.javabaas.javasdk.JBApp;
+import com.javabaas.javasdk.JBConfig;
 import com.javabaas.javasdk.JBException;
 import com.javabaas.javasdk.JBUtils;
 import com.javabaas.shell.common.CommandContext;
@@ -86,42 +87,7 @@ public class AppCommands implements CommandMarker {
         }
     }
 
-    @CliCommand(value = "account", help = "设置账号")
-    public void setAccount() throws JsonProcessingException {
-        if (context.isAppAvailable()) {
-            try {
-                List<String> accountTypes = getAccountTypes();
-                int accountType = PromptUtil.choose(accountTypes, "请选择AccountType", 0);
-                if (accountType == 0) {
-                    return;
-                }
-                String key = PromptUtil.string("请输入key值");
-                if (JBUtils.isEmpty(key)) {
-                    return;
-                }
-                String secret = PromptUtil.string("请输入secret值");
-                if (JBUtils.isEmpty(secret)) {
-                    return;
-                }
 
-                JBApp.Account account = new JBApp.Account();
-                account.setKey(key);
-                account.setSecret(secret);
 
-                JBApp.setAccount(JBApp.AccountType.getType(accountType), account);
-                success("更新成功");
-            } catch (JBException e) {
-                error(e.getMessage());
-            }
-        }
-    }
-
-    private List<String> getAccountTypes() {
-        List<String> list = new ArrayList<>();
-        for (JBApp.AccountType type : JBApp.AccountType.values()) {
-            list.add(type.getValue());
-        }
-        return list;
-    }
 
 }
