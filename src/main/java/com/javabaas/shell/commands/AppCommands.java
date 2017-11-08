@@ -38,7 +38,7 @@ public class AppCommands implements CommandMarker {
             try {
                 JBApp app = context.getCurrentApp();
                 JBApp.JBAppExport appExport = JBApp.export(app.getId());
-                message(appExport);
+                message(JBUtils.writeValueAsString(appExport));
             } catch (JBException e) {
                 error(e.getMessage());
             }
