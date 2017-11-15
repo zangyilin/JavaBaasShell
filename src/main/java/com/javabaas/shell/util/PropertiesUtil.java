@@ -13,7 +13,7 @@ import java.net.URLDecoder;
  */
 public class PropertiesUtil {
 
-    private static final String CONFIG_FILE_NAME = "/config.properties";
+    private static final String CONFIG_FILE_NAME = "/jbshell.properties";
 
     public static PropertiesStorage loadProperties() {
         try {
@@ -44,7 +44,7 @@ public class PropertiesUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (filePath.endsWith(".jar")) {
+        if (filePath.endsWith(".jar") || filePath.endsWith(".exe")) {
             //可执行jar包运行的结果里包含".jar"
             filePath = filePath.substring(0, filePath.lastIndexOf("/") + 1);
         }
