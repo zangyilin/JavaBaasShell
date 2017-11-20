@@ -26,6 +26,9 @@ public class ServerContext {
             if (index != null && servers != null && servers.size() > index) {
                 selectServer(index);
             }
+        } else {
+            JBServer server = new JBServer("http://localhost:8080/api", "JavaBaas");
+            addServer(server);
         }
     }
 
