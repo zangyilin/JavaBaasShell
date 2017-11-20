@@ -62,7 +62,7 @@ public class ObjectCommands implements CommandMarker {
             try {
                 String id = inputs[0];
                 String className = context.getCurrentClass();
-                JBObject object = JBObject.createWithOutData(className, id);
+                JBObject object = JBObject.createWithoutData(className, id);
                 JBUtils.copyPropertiesFromMapToJBObject(object, JBUtils.readValue(inputs[1], Map.class));
                 object.save();
                 success("对象更新");
@@ -204,7 +204,7 @@ public class ObjectCommands implements CommandMarker {
         if (context.isClassAvailable()) {
             String className = context.getCurrentClass();
             try {
-                JBObject object = JBObject.createWithOutData(className, id);
+                JBObject object = JBObject.createWithoutData(className, id);
                 object.delete();
                 success("对象删除.");
             } catch (JBException e) {
