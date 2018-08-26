@@ -167,7 +167,7 @@ public class ObjectCommands implements CommandMarker {
                     List<Object> cols = new LinkedList<>();
                     cols.add(baasObject.getObjectId());
                     if (time.equals("1")) {
-                        cols.add(DateUtil.format(Long.valueOf(baasObject.getCreatedAt())));
+                        cols.add(DateUtil.format(baasObject.getCreatedAt()));
                     }
                     if (plat.equals("1")) {
                         cols.add("");

@@ -1,6 +1,6 @@
 package com.javabaas.shell.common;
 
-import com.javabaas.javasdk.JBConfig;
+import com.javabaas.javasdk.JB;
 import com.javabaas.shell.entity.JBServer;
 import com.javabaas.shell.util.Print;
 import com.javabaas.shell.util.PropertiesStorage;
@@ -82,7 +82,7 @@ public class ServerContext {
                 properties.setServerIndex(index);
                 PropertiesUtil.saveProperties(properties);
                 Print.message("当前服务器地址切换为 " + currentServer.getHost());
-                JBConfig.initAdmin(currentServer.getHost(), currentServer.getKey());
+                JB.initAdmin(currentServer.getHost(), currentServer.getKey());
                 return true;
             }
         }

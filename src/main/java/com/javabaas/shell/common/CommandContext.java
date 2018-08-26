@@ -1,7 +1,7 @@
 package com.javabaas.shell.common;
 
+import com.javabaas.javasdk.JB;
 import com.javabaas.javasdk.JBApp;
-import com.javabaas.javasdk.JBConfig;
 import com.javabaas.shell.entity.JBServer;
 import com.javabaas.shell.provider.PromptProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +65,7 @@ public class CommandContext {
     public void setCurrentApp(JBApp currentApp) {
         this.currentApp = currentApp;
         this.currentClass = null;
-        JBConfig.useApp(currentApp);
+        JB.useApp(currentApp);
         changePrompt();
     }
 

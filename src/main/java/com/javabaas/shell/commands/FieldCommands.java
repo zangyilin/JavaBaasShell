@@ -134,21 +134,21 @@ public class FieldCommands implements CommandMarker {
         }
     }
 
-    @CliCommand(value = "field +r", help = "设置只读字段")
+    @CliCommand(value = "field +r", help = "设置必填字段")
     public void setRequired(@CliOption(key = {""}, mandatory = true) final String fieldName) {
         if (context.isClassAvailable()) {
             setRequired(fieldName, true);
         }
     }
 
-    @CliCommand(value = "field -r", help = "取消只读字段")
+    @CliCommand(value = "field -r", help = "取消必填字段")
     public void setNoRequired(@CliOption(key = {""}, mandatory = true) final String fieldName) {
         if (context.isClassAvailable()) {
             setRequired(fieldName, false);
         }
     }
 
-    @CliCommand(value = "field +s", help = "设置安全字段")
+    @CliCommand(value = "field +s", help = "设置安全字段 安全字段必须需要 master 管理权限才可以修改")
     public void setSecurity(@CliOption(key = {""}, mandatory = true) final String fieldName) {
         if (context.isClassAvailable()) {
             setSecurity(fieldName, true);
