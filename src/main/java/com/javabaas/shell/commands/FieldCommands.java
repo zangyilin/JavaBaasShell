@@ -213,6 +213,7 @@ public class FieldCommands implements CommandMarker {
         list.add("OBJECT");
         list.add("ARRAY");
         list.add("POINTER");
+        list.add("GEOPOINT");
         return list;
     }
 

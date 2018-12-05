@@ -103,6 +103,7 @@ public class ClassCommands implements CommandMarker {
                 JBClazz clazz = new JBClazz(className);
                 clazz.save();
                 success("类创建成功");
+                set(className);
             } catch (JBException e) {
                 error(e.getMessage());
             }
