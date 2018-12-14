@@ -73,12 +73,12 @@ public class FieldCommands implements CommandMarker {
                     }
                     String internalString = baasField.isInternal() ? "I" : " ";
                     String securityString = baasField.isSecurity() ? "S" : " ";
-                    String notNullString = baasField.isNotNull() ? "N" : " ";
-                    String readonlyString = baasField.isReadOnly() ? "R" : " ";
+                    String notnullString = baasField.isNotnull() ? "N" : " ";
+                    String readonlyString = baasField.isReadonly() ? "R" : " ";
                     System.out.println(Ansi.ansi().fg(Ansi.Color.YELLOW).a(internalString).fg(Ansi.Color.RED).a(securityString).fg(Ansi
                             .Color
 
-                            .GREEN).a(notNullString).fg(Ansi.Color.CYAN).a(typeString).reset().a(baasField.getName()).a(readonlyString).fg(Ansi.Color.BLUE).a(typeString).reset().a(baasField.getName()));
+                            .GREEN).a(notnullString).fg(Ansi.Color.BLUE).a(readonlyString).fg(Ansi.Color.CYAN).a(typeString).reset().a(baasField.getName()));
                 });
             } catch (JBException e) {
                 error(e.getMessage());
@@ -136,16 +136,16 @@ public class FieldCommands implements CommandMarker {
     }
 
     @CliCommand(value = "field +n", help = "设置必填字段")
-    public void setNotNull(@CliOption(key = {""}, mandatory = true) final String fieldName) {
+    public void setNotnull(@CliOption(key = {""}, mandatory = true) final String fieldName) {
         if (context.isClassAvailable()) {
-            setNotNull(fieldName, true);
+            setNotnull(fieldName, true);
         }
     }
 
     @CliCommand(value = "field -n", help = "取消必填字段")
-    public void setNoNotNull(@CliOption(key = {""}, mandatory = true) final String fieldName) {
+    public void setNoNotnull(@CliOption(key = {""}, mandatory = true) final String fieldName) {
         if (context.isClassAvailable()) {
-            setNotNull(fieldName, false);
+            setNotnull(fieldName, false);
         }
     }
 
@@ -180,9 +180,8 @@ public class FieldCommands implements CommandMarker {
     private void setSecurity(String fieldName, boolean security) {
         String className = context.getCurrentClass();
         try {
-            JBField field = new JBField();
-            field.setClazz(new JBClazz(className));
-            field.setName(fieldName);
+            // 查询field
+            JBField field = JBField.get(className, fieldName);
             field.setSecurity(security);
             field.update();
             success("更新成功");
@@ -194,10 +193,8 @@ public class FieldCommands implements CommandMarker {
     private void setReadonly(String fieldName, boolean readonly) {
         String className = context.getCurrentClass();
         try {
-            JBField field = new JBField();
-            field.setClazz(new JBClazz(className));
-            field.setName(fieldName);
-            field.setReadOnly(readonly);
+            JBField field = JBField.get(className, fieldName);
+            field.setReadonly(readonly);
             field.update();
             success("更新成功");
         } catch (JBException e) {
@@ -205,13 +202,11 @@ public class FieldCommands implements CommandMarker {
         }
     }
 
-    private void setNotNull(String fieldName, boolean notNull) {
+    private void setNotnull(String fieldName, boolean notnull) {
         String className = context.getCurrentClass();
-        JBField field = new JBField();
-        field.setClazz(new JBClazz(className));
-        field.setName(fieldName);
-        field.setNotNull(notNull);
         try {
+            JBField field = JBField.get(className, fieldName);
+            field.setNotnull(notnull);
             field.update();
             success("更新成功");
         } catch (JBException e) {
